@@ -36,15 +36,6 @@ Menggunakan **Time Series Cross-Validation** (Walk-forward Validation) dengan 5-
 
 ---
 
-## Smart Inventory Logic
-Data Science di sini digunakan untuk mendukung **Prescriptive Analytics**. Saya menerapkan rumus *Safety Stock* ke dalam logika sistem:
-
-$$Stock\ Recommendation = \hat{y} (Forecast) + \sigma (Safety\ Buffer)$$
-
-Sistem secara otomatis menambahkan buffer **+5 unit** sebagai jaring pengaman operasional untuk menghadapi lonjakan pembeli tak terduga.
-
----
-
 ## Dashboard Features
 1.  **Strategic KPIs:** Monitoring produk terlaris dan total omzet bulanan.
 2.  **Interactive Forecast Charts:** Visualisasi komparatif antara data aktual dan proyeksi AI 7 hari ke depan.
