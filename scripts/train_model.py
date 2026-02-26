@@ -18,7 +18,6 @@ def load_data(path):
 # STEP 2 — Data Cleaning
 def clean_data(data):
     data = data.copy() 
-    # Hindari inplace=True untuk kompatibilitas pandas masa depan
     data = data.replace(["ERROR", "UNKNOWN", ""], np.nan)
     data["Quantity"] = pd.to_numeric(data["Quantity"], errors="coerce")
     data["Transaction Date"] = pd.to_datetime(data["Transaction Date"], errors="coerce")
@@ -26,7 +25,7 @@ def clean_data(data):
     data = data[data["Quantity"] > 0]
     return data[["Transaction Date", "Item", "Quantity"]]
 
-# STEP 3 — Aggregate & Make Continuous (Penting untuk Time Series)
+# STEP 3 — Aggregate & Make Continuous 
 def prepare_time_series(data):
     daily = data.groupby(["Transaction Date", "Item"], as_index=False).agg({"Quantity": "sum"})
     all_items = daily["Item"].unique()
@@ -106,7 +105,7 @@ def train_model_with_cv(df):
     model_final = RandomForestRegressor(n_estimators=200, max_depth=10, random_state=42, n_jobs=-1)
     model_final.fit(X_scaled, y)
     
-    # Path handling: simpan ke folder models di root
+    # simpan ke folder models
     model_path = "models"
     if not os.path.exists(model_path):
         os.makedirs(model_path)
@@ -114,7 +113,7 @@ def train_model_with_cv(df):
     joblib.dump(model_final, f"{model_path}/rf_model.pkl")
     joblib.dump(le_item, f"{model_path}/item_encoder.pkl")
     joblib.dump(scaler_final, f"{model_path}/scaler.pkl")
-    print(f"✨ Model & Artifacts sukses disimpan di folder /{model_path}!")
+    print(f"Model & Artifacts sukses disimpan di folder /{model_path}!")
 
 if __name__ == "__main__":
     DATA_PATH = "data/dirty_cafe_sales.csv"
@@ -125,4 +124,4 @@ if __name__ == "__main__":
         df_feat = create_improved_features(df_ts)
         train_model_with_cv(df_feat)
     else:
-        print(f"❌ Error: File {DATA_PATH} tidak ditemukan.")
+        print(f"Error: File {DATA_PATH} tidak ditemukan.")

@@ -4,12 +4,12 @@
 [![ML Framework](https://img.shields.io/badge/ML-Scikit--Learn-orange.svg)](https://scikit-learn.org/)
 [![Dashboard](https://img.shields.io/badge/UI-Streamlit-red.svg)](https://streamlit.io/)
 
-## 📌 Executive Summary
+## Executive Summary
 Proyek ini mengintegrasikan **Predictive Analytics** ke dalam manajemen operasional kafe. Fokus utamanya adalah mentransformasi data transaksi historis yang *noisy* menjadi instruksi inventaris yang presisi. Dengan menggunakan pendekatan Machine Learning, sistem ini membantu pemilik bisnis meminimalkan *waste* (pemborosan bahan) dan *stockout* (kehilangan potensi penjualan).
 
 ---
 
-## 📉 The Business Challenge
+## The Business Challenge
 Pada bisnis F&B skala menengah-kecil, fluktuasi harian seringkali dianggap acak. Masalah utamanya meliputi:
 * **Overstocking:** Bahan baku *perishable* terbuang karena prediksi manual yang terlalu optimis.
 * **Lost Sales:** Kehilangan profit saat permintaan melonjak namun stok tidak mencukupi.
@@ -17,7 +17,7 @@ Pada bisnis F&B skala menengah-kecil, fluktuasi harian seringkali dianggap acak.
 
 ---
 
-## 🧠 Data Science Workflow
+## Data Science Workflow
 
 ### 1. Feature Engineering (Signal Extraction)
 Model tidak hanya melihat angka penjualan, tetapi mengekstraksi konteks melalui:
@@ -36,7 +36,7 @@ Menggunakan **Time Series Cross-Validation** (Walk-forward Validation) dengan 5-
 
 ---
 
-## 🛠️ Smart Inventory Logic
+## Smart Inventory Logic
 Data Science di sini digunakan untuk mendukung **Prescriptive Analytics**. Saya menerapkan rumus *Safety Stock* ke dalam logika sistem:
 
 $$Stock\ Recommendation = \hat{y} (Forecast) + \sigma (Safety\ Buffer)$$
@@ -45,7 +45,7 @@ Sistem secara otomatis menambahkan buffer **+5 unit** sebagai jaring pengaman op
 
 ---
 
-## 📊 Dashboard Features
+## Dashboard Features
 1.  **Strategic KPIs:** Monitoring produk terlaris dan total omzet bulanan.
 2.  **Interactive Forecast Charts:** Visualisasi komparatif antara data aktual dan proyeksi AI 7 hari ke depan.
 3.  **Operational Instruction:** Mengubah angka prediksi menjadi perintah belanja yang jelas (Contoh: "Sedia 12 Unit").

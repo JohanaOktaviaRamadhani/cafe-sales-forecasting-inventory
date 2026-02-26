@@ -4,10 +4,10 @@ import numpy as np
 import joblib
 import matplotlib.pyplot as plt
 
-# --- CONFIG DASHBOARD ---
+# CONFIG DASHBOARD
 st.set_page_config(page_title="Cafe Sales Intelligence", layout="wide")
 
-# --- 1. LOAD ARTIFACTS ---
+# 1. LOAD ARTIFACTS
 @st.cache_resource
 def load_artifacts():
     model = joblib.load("models/rf_model.pkl")
@@ -15,7 +15,7 @@ def load_artifacts():
     scaler = joblib.load("models/scaler.pkl")
     return model, le_item, scaler
 
-# --- 2. LOAD & PREPROCESS DATA ---
+# 2. LOAD & PREPROCESS DATA
 @st.cache_data
 def load_data():
     df = pd.read_csv("data/dirty_cafe_sales.csv")
@@ -33,17 +33,15 @@ def load_data():
     df["Total Sales"] = df["Quantity"] * df["Price Per Unit"]
     return df
 
-# --- 3. LOGIKA FORECAST ---
+# 3. LOGIKA FORECAST
 def run_forecast(item_name, df_raw, model, le_item, scaler):
     # Agregasi harian
     df_item = df_raw[df_raw["Item"] == item_name].groupby("Transaction Date")["Quantity"].sum().reset_index()
     df_item = df_item.sort_values("Transaction Date")
 
-    # Kita butuh minimal 7-14 hari terakhir untuk hitung Lag & Rolling
     df_hist = df_item.tail(14).copy()
     last_date = df_hist["Transaction Date"].max()
     
-    # Penampung data untuk update rekursif
     history_values = df_hist["Quantity"].tolist()
     forecasts = []
     
@@ -57,7 +55,7 @@ def run_forecast(item_name, df_raw, model, le_item, scaler):
         month = f_date.month
         is_month_end = 1 if f_date.is_month_end else 0
         
-        # B. Fitur Lag (Sesuai train_model.py)
+        # B. Fitur Lag 
         lag1 = history_values[-1]
         lag2 = history_values[-2] if len(history_values) >= 2 else lag1
         lag3 = history_values[-3] if len(history_values) >= 3 else lag2
@@ -91,7 +89,7 @@ def run_forecast(item_name, df_raw, model, le_item, scaler):
         history_values.append(pred_val)
     return df_hist.tail(7), pd.DataFrame(forecasts)
 
-# --- EXECUTION ---
+# EXECUTION
 model, le_item, scaler = load_artifacts()
 df_raw = load_data()
 max_date = df_raw["Transaction Date"].max()
@@ -99,14 +97,14 @@ all_items = sorted(df_raw["Item"].unique())
 
 MAE_SCORE = 4.5
 
-# Pre-calculate untuk efisiensi
+# Pre-calculate 
 results = {}
 for it in all_items:
     h, f = run_forecast(it, df_raw, model, le_item, scaler)
     change = ((f["Quantity"].mean() - h["Quantity"].mean()) / h["Quantity"].mean() * 100) if h["Quantity"].mean() > 0 else 0
     results[it] = (h, f, change)
 
-# --- HEADER & KPI ---
+# HEADER & KPI
 st.title("☕ Cafe Sales Strategic Dashboard")
 st.markdown(f"**Analisis Periode: {max_date.strftime('%B %Y')}**")
 
@@ -114,7 +112,7 @@ st.markdown(f"**Analisis Periode: {max_date.strftime('%B %Y')}**")
 # 1. Data Bulan Sekarang
 df_month = df_raw[df_raw["Transaction Date"].dt.month == max_date.month]
 
-# 2. Data Bulan Sebelumnya (untuk komparasi)
+# 2. Data Bulan Sebelumnya
 prev_month_date = max_date - pd.DateOffset(months=1)
 df_prev_month = df_raw[df_raw["Transaction Date"].dt.month == prev_month_date.month]
 
@@ -133,7 +131,7 @@ inc_val = df_month.groupby("Item")["Total Sales"].sum().max()
 inc_val_prev = df_prev_month[df_prev_month["Item"] == inc_item]["Total Sales"].sum() if not df_prev_month.empty else 0
 diff_inc = inc_val - inc_val_prev
 
-# KPI 3: Next Week Star (Sudah ada di loop results)
+# KPI 3: Next Week Star
 star_item = max(results, key=lambda k: results[k][2])
 star_growth = results[star_item][2]
 
@@ -158,7 +156,7 @@ k3.metric(
 )
 st.divider()
 
-# --- GRID PERFORMANCE ---
+# GRID PERFORMANCE
 rows = [all_items[i:i + 3] for i in range(0, len(all_items), 3)]
 for row in rows:
     cols = st.columns(3)
@@ -192,7 +190,7 @@ for row in rows:
                 else:
                     st.info("**Prediksi: Stabil**")
                     st.markdown(f"**Karena** Penjualan terjaga konsisten. <br>**Saran:** Pertahankan kualitas dan ketersediaan stok seperti biasa.", unsafe_allow_html=True)
-# --- SIDEBAR ---
+# SIDEBAR
 with st.sidebar:
     st.markdown("## 📊 Model Analytics") 
     st.divider()
